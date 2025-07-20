@@ -1,14 +1,27 @@
 // NFTCard.tsx placeholder
 // src/components/NFTCard.tsx
-import { Card, CardContent } from '../components/ui/card';
-
 export default function NFTCard({ tokenUri, tokenId }: { tokenUri: string; tokenId: number }) {
   return (
-    <Card className="max-w-md mx-auto">
-      <CardContent className="p-4">
-        <img src={tokenUri} alt="NFT" className="rounded-xl" />
-        <p className="mt-2 text-sm text-muted">Token ID: {tokenId}</p>
-      </CardContent>
-    </Card>
+    <div
+      style={{
+        maxWidth: '400px',
+        margin: '20px auto',
+        border: '1px solid #ddd',
+        borderRadius: '16px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
+        padding: '16px',
+        textAlign: 'center',
+      }}
+    >
+      <img
+        src={tokenUri}
+        alt="NFT"
+        style={{ borderRadius: '12px', maxWidth: '100%', height: 'auto' }}
+      />
+      <p style={{ marginTop: '12px', fontSize: '14px', color: '#555' }}>
+        Token ID: {tokenId}
+      </p>
+    </div>
   );
 }
+

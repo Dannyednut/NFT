@@ -1,6 +1,5 @@
 // src/hooks/useContract.ts
-import { useEffect, useState } from 'react';
-import { BrowserProvider, Contract, JsonRpcSigner } from 'ethers';
+import { ethers } from 'ethers';
 import { ABI } from '../lib/abi';
 import { CONTRACT_ADDRESS } from '../config/contract';
 
@@ -10,26 +9,14 @@ declare global {
   }
 }
 
-export function useContract() {
-  const [provider, setProvider] = useState<BrowserProvider | null>(null);
-  const [wallet, setWallet] = useState<string | null>(null);
-  const [contract, setContract] = useState<Contract | null>(null);
+export async function initContract() {
+  if (!window.ethereum) throw new Error('MetaMask not detected');
 
-  useEffect(() => {
-    if (window.ethereum) {
-      const p = new BrowserProvider(window.ethereum as any);
-      setProvider(p);
-    }
-  }, []);
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const accounts = await provider.send('eth_requestAccounts', []);
+  const wallet = accounts[0];
+  const signer = await provider.getSigner();
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
 
-  async function connectWallet() {
-    if (!provider) return;
-    const accounts = await provider.send('eth_requestAccounts', []);
-    setWallet(accounts[0]);
-    const signer = await provider.getSigner() as JsonRpcSigner;
-    const nft = new Contract(CONTRACT_ADDRESS, ABI, signer);
-    setContract(nft);
-  }
-
-  return { provider, wallet, contract, connectWallet };
+  return { provider, wallet, contract };
 }
