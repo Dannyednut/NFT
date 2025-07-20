@@ -9,6 +9,7 @@ import SentimentCard from '../components/SentimentCard';
 import { Button } from '../components/ui/button';
 import { useContract } from '../hooks/useContract';
 
+
 export default function Home() {
   const { contract } = useContract();
   const [tokenId, setTokenId] = useState<number | null>(null);

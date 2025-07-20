@@ -1,10 +1,9 @@
 // src/hooks/useContract.ts
 import { useEffect, useState } from 'react';
-import { ethers } from 'ethers'; // ✅ v6-compatible import
+import { BrowserProvider, Contract, JsonRpcSigner } from 'ethers';
 import { ABI } from '../lib/abi';
 import { CONTRACT_ADDRESS } from '../config/contract';
 
-// Add type declaration for window.ethereum
 declare global {
   interface Window {
     ethereum?: any;
@@ -12,14 +11,14 @@ declare global {
 }
 
 export function useContract() {
-  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+  const [provider, setProvider] = useState<BrowserProvider | null>(null);
   const [wallet, setWallet] = useState<string | null>(null);
-  const [contract, setContract] = useState<ethers.Contract | null>(null);
+  const [contract, setContract] = useState<Contract | null>(null);
 
   useEffect(() => {
-    if (typeof window.ethereum !== 'undefined') {
-      const _provider = new ethers.BrowserProvider(window.ethereum); // ✅ v6 syntax
-      setProvider(_provider);
+    if (window.ethereum) {
+      const p = new BrowserProvider(window.ethereum as any);
+      setProvider(p);
     }
   }, []);
 
@@ -27,10 +26,9 @@ export function useContract() {
     if (!provider) return;
     const accounts = await provider.send('eth_requestAccounts', []);
     setWallet(accounts[0]);
-
-    const signer = await provider.getSigner(); // ✅ getSigner() is now async in v6
-    const _contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer); // ✅ signer works here in v6
-    setContract(_contract);
+    const signer = await provider.getSigner() as JsonRpcSigner;
+    const nft = new Contract(CONTRACT_ADDRESS, ABI, signer);
+    setContract(nft);
   }
 
   return { provider, wallet, contract, connectWallet };
