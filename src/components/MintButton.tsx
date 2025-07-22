@@ -2,17 +2,19 @@ export default function MintButton({
   contract,
   wallet,
   setToken,
+  quantity,
 }: {
   contract: any;
   wallet: string | null;
   setToken: (id: number, uri: string) => void;
+  quantity: number;
 }) {
   const mint = async () => {
     console.log('Mint button clicked');
     if (!contract || !wallet) return console.log('Missing wallet or contract');
 
     try {
-      const tx = await contract.mint(1);
+      const tx = await contract.mint(quantity);
       await tx.wait();
       const total = await contract.totalSupply();
       const id = Number(Number(total) - 1);
@@ -33,8 +35,9 @@ export default function MintButton({
       fontSize: '16px',
       border: 'none',
       cursor: 'pointer',
+      width: '100%',
     }}>
-      🔥 Mint
+      Mint
     </button>
   );
 }
